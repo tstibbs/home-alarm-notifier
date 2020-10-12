@@ -1,0 +1,20 @@
+{
+	"name": "@tstibbs/home-alarm-notifier-functions",
+	"private": true,
+	"dependencies": {
+		"aws-sdk": "^2.761.0",
+		"dotenv": "^8.2.0"
+	},
+	"devDependencies": {
+		"@tstibbs/cloud-core-utils": "file:../../../cloud-core/aws/utils",
+		"webpack": "^4.44.1",
+		"webpack-cli": "^3.3.12"
+	},
+	"scripts": {
+		"build": "rm -rf dist/* && webpack",
+		"test": "node test/test-built.cjs && node test/test-templates.mjs",
+		"package": "cd dist && rm -f dist/function.zip && zip -r function.zip .",
+		"deploy": "node deploy/deploy-stack.mjs",
+		"everything": "npm run build && npm run test && npm run package && npm run deploy"
+	}
+}
