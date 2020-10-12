@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  app:
+    image: "home-alarm-app:latest"
+    build: .
+    restart: unless-stopped
+    secrets:
+      - aws_credentials
+    environment:
+      - AWS_CREDENTIALS_FILE=/run/secrets/aws_credentials
+      - aws_region=eu-west-2
+      - aws_account=${aws_account}
+      - aws_queue_name=home-alarm-notifier-CloudToEdgeQueue.fifo
+      - DEVICES=${DEVICES}
+      - notification_function_name=home-alarm-notifier-notification-function
+
+secrets:
+  aws_credentials:
+    file: aws_credentials.json
