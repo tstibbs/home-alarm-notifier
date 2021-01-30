@@ -1,0 +1,54 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # checkout a dependent project
+    - uses: actions/checkout@v2
+      with:
+        repository: tstibbs/cloud-core
+        path: 'cloud-core' # will resolve to /home/runner/work/home-alarm-notifier/home-alarm-notifier/cloud-core
+
+    # checkout 'this' project
+    - uses: actions/checkout@v2
+      with:
+        path: 'home-alarm-notifier' # will resolve to /home/runner/work/home-alarm-notifier/home-alarm-notifier/home-alarm-notifier
+
+
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install python dependencies
+      run: pip install cfn-lint
+
+    # cloud services
+
+    - run: npm ci
+      working-directory: home-alarm-notifier/aws/functions
+    - run: npm run build
+      working-directory: home-alarm-notifier/aws/functions
+    - run: npm run test
+      working-directory: home-alarm-notifier/aws/functions
+    - run: npm run package
+      working-directory: home-alarm-notifier/aws/functions
+    # don't run the actual deploy in the CI, but run everything up to here to get the best idea of whether it works
+
+    # edge code
+
+    - run: npm ci
+      working-directory: home-alarm-notifier/edge/app
+    - run: npm run test
+      working-directory: home-alarm-notifier/edge/app
+    - run: docker-compose build
+      working-directory: home-alarm-notifier/edge
