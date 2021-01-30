@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   app:
-    image: "home-alarm-app:latest"
+    image: "home-alarm-notifier:latest"
     build: .
     restart: unless-stopped
     secrets:
