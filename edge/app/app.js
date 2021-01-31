@@ -57,14 +57,16 @@ async function checkDevices() {
 	console.log(pings);
 	let success = pings.includes(true);
 	console.log(`Ping success=${success} - ${new Date()}`);
-	let params = {
-		FunctionName: notificationFunctionName,
-		Payload: JSON.stringify({
-			"event": "disarmed",
-			"situation": "home owner " + (success? "was " : "not ") + "present"
-		})
-	};
-	await lambda.invoke(params).promise();
+	if (!success) {
+		let params = {
+			FunctionName: notificationFunctionName,
+			Payload: JSON.stringify({
+				"event": "disarmed",
+				"situation": "home owner " + (success? "was " : "not ") + "present"
+			})
+		};
+		await lambda.invoke(params).promise();
+	}
 }
 
 async function isAccessible(devicePing) {
