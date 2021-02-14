@@ -128,7 +128,7 @@ Resources:
       FunctionName: !Sub "${AWS::StackName}-incoming-trigger-function"
       Handler: main.incomingTriggerHandler
       Role: !GetAtt IncomingTriggerFunctionExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 20
       MemorySize: 128
       Environment:
@@ -194,7 +194,7 @@ Resources:
       FunctionName: !Sub "${AWS::StackName}-notification-function"
       Handler: main.notificationHandler
       Role: !GetAtt NotificationFunctionExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 20
       MemorySize: 128
       Environment:
