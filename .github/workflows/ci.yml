@@ -24,23 +24,27 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: 14.x
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    - name: Install python dependencies
-      run: pip install cfn-lint
+      # Upgrade npm so it works with our lockfile versions
+    - name: Upgrade npm
+      run: npm install -g npm@latest
+    - name: Install node dependencies
+      run: npm install -g aws-cdk
 
     # cloud services
 
+    - name: Set up environment
+      run: mkdir cdk.tmp
+      working-directory: home-alarm-notifier/aws/functions
+
+    - name: Load cloud-core dependencies
+      run: npm ci
+      working-directory: cloud-core/aws/utils
+      
     - run: npm ci
       working-directory: home-alarm-notifier/aws/functions
-    - run: npm run build
+    - run: npm run testsynth
       working-directory: home-alarm-notifier/aws/functions
     - run: npm run test
-      working-directory: home-alarm-notifier/aws/functions
-    - run: npm run package
       working-directory: home-alarm-notifier/aws/functions
     # don't run the actual deploy in the CI, but run everything up to here to get the best idea of whether it works
 
