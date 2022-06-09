@@ -28,7 +28,7 @@ class DeployStack extends Stack {
 			entry: 'src/incomingTriggerFunction.js',
 			memorySize: 128,
 			timeout: Duration.seconds(20),
-			runtime: Runtime.NODEJS_14_X
+			runtime: Runtime.NODEJS_16_X
 		})
 		incomingTriggerFunction.addToRolePolicy(new PolicyStatement({
 			actions: ['iot:Publish'],
@@ -60,7 +60,7 @@ class DeployStack extends Stack {
 			},
 			memorySize: 128,
 			timeout: Duration.seconds(20),
-			runtime: Runtime.NODEJS_14_X
+			runtime: Runtime.NODEJS_16_X
 		})
 
 		new TopicRule(this, 'topicRule', {
