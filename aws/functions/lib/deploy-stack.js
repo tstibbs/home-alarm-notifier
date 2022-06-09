@@ -1,18 +1,20 @@
-import cdk from '@aws-cdk/core'
-import nodejsLambda from '@aws-cdk/aws-lambda-nodejs'
-import lambda from '@aws-cdk/aws-lambda'
-import iam from '@aws-cdk/aws-iam'
-import apig from '@aws-cdk/aws-apigatewayv2'
-import apigIntegrations from '@aws-cdk/aws-apigatewayv2-integrations'
-import {CfnPolicy, TopicRule, IotSql} from '@aws-cdk/aws-iot'
-import {LambdaFunctionAction} from '@aws-cdk/aws-iot-actions'
+import {Stack, Duration, Aws, CfnOutput} from 'aws-cdk-lib'
+import {NodejsFunction} from 'aws-cdk-lib/aws-lambda-nodejs'
+import {Runtime} from 'aws-cdk-lib/aws-lambda'
+import {PolicyStatement} from 'aws-cdk-lib/aws-iam'
+import {HttpApi, HttpMethod} from '@aws-cdk/aws-apigatewayv2-alpha'
+import {HttpLambdaIntegration} from '@aws-cdk/aws-apigatewayv2-integrations-alpha'
+import {CfnPolicy} from 'aws-cdk-lib/aws-iot'
+import {TopicRule, IotSql} from '@aws-cdk/aws-iot-alpha'
+import {LambdaFunctionAction} from '@aws-cdk/aws-iot-actions-alpha'
 import {IFTTT_KEY} from './deploy-envs.js'
 import {INCOMING_TOPIC_NAME, RESPONSE_TOPIC_NAME, RULE_NAME} from '../../../edge/app/constants.js'
 
-const incomingTopicArn = `arn:aws:iot:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:topic/${INCOMING_TOPIC_NAME}`
-const responseTopicArn = `arn:aws:iot:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:topic/${RESPONSE_TOPIC_NAME}`
+const triggerPath = 'home-alarm-notification-trigger'
+const incomingTopicArn = `arn:aws:iot:${Aws.REGION}:${Aws.ACCOUNT_ID}:topic/${INCOMING_TOPIC_NAME}`
+const responseTopicArn = `arn:aws:iot:${Aws.REGION}:${Aws.ACCOUNT_ID}:topic/${RESPONSE_TOPIC_NAME}`
 
-class DeployStack extends cdk.Stack {
+class DeployStack extends Stack {
 	constructor(scope, id, props) {
 		super(scope, id, props)
 
@@ -22,42 +24,43 @@ class DeployStack extends cdk.Stack {
 	}
 
 	createIncomingElements() {
-		const incomingTriggerFunction = new nodejsLambda.NodejsFunction(this, 'incomingTriggerFunction', {
+		const incomingTriggerFunction = new NodejsFunction(this, 'incomingTriggerFunction', {
 			entry: 'src/incomingTriggerFunction.js',
 			memorySize: 128,
-			timeout: cdk.Duration.seconds(20),
-			runtime: lambda.Runtime.NODEJS_14_X
+			timeout: Duration.seconds(20),
+			runtime: Runtime.NODEJS_14_X
 		})
-		incomingTriggerFunction.addToRolePolicy(new iam.PolicyStatement({
+		incomingTriggerFunction.addToRolePolicy(new PolicyStatement({
 			actions: ['iot:Publish'],
 			resources: [incomingTopicArn]
 		}))
-		incomingTriggerFunction.addToRolePolicy(new iam.PolicyStatement({
+		incomingTriggerFunction.addToRolePolicy(new PolicyStatement({
 			actions: ['iot:DescribeEndpoint'],
 			resources: ['*']
 		}))
 		
-		const incomingInterfaceApi = new apig.HttpApi(this, 'incomingInterfaceApi', {
-			apiName: `${cdk.Aws.STACK_NAME}-incomingInterfaceApi`
+		const incomingInterfaceApi = new HttpApi(this, 'incomingInterfaceApi', {
+			apiName: `${Aws.STACK_NAME}-incomingInterfaceApi`
 		})
+		const incomingTriggerIntegration = new HttpLambdaIntegration('incomingTriggerIntegration', incomingTriggerFunction)
 		incomingInterfaceApi.addRoutes({
-			path: '/home-alarm-notification-trigger',
-			methods: [ apig.HttpMethod.GET ],
-			integration: new apigIntegrations.LambdaProxyIntegration({
-				handler: incomingTriggerFunction
-			})
+			path: `/${triggerPath}`,
+			methods: [ HttpMethod.GET ],
+			integration: incomingTriggerIntegration
 		})
+
+		new CfnOutput(this, 'triggerUrl', { value: `${incomingInterfaceApi.url}${triggerPath}` })
 	}
 
 	createNotificationElements() {
-		const notificationFunction = new nodejsLambda.NodejsFunction(this, 'notificationFunction', {
+		const notificationFunction = new NodejsFunction(this, 'notificationFunction', {
 			entry: 'src/notificationFunction.js',
 			environment: {
 				IFTTT_KEY
 			},
 			memorySize: 128,
-			timeout: cdk.Duration.seconds(20),
-			runtime: lambda.Runtime.NODEJS_14_X
+			timeout: Duration.seconds(20),
+			runtime: Runtime.NODEJS_14_X
 		})
 
 		new TopicRule(this, 'topicRule', {
@@ -75,7 +78,7 @@ class DeployStack extends cdk.Stack {
 					{
 						Effect: 'Allow',
 						Action: 'iot:Subscribe',
-						Resource: `arn:aws:iot:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:topicfilter/${INCOMING_TOPIC_NAME}`
+						Resource: `arn:aws:iot:${Aws.REGION}:${Aws.ACCOUNT_ID}:topicfilter/${INCOMING_TOPIC_NAME}`
 					},
 					{
 						Effect: 'Allow',
