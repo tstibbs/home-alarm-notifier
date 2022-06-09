@@ -2,7 +2,7 @@
 	"private": true,
 	"type": "module",
 	"dependencies": {
-		"aws-sdk": "^2.596.0"
+		"@tstibbs/cloud-core-edge-utils": "file:../../../cloud-core/edge/iot"
 	},
 	"scripts": {
 		"test": "DEVICES=abc AWS_CREDENTIALS_FILE=test/dummy-credentials-file.json node test/test.js"

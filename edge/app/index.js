@@ -1,14 +1,10 @@
-import {poll, checkDevices} from './app.js'
+import {startListeningForCommands, checkDevices} from './app.js'
 
 console.log(`Running... ${new Date()}`);
 
 var args = process.argv.slice(2);
 if (args.length == 0) {
-	poll().catch(err => {
-		console.log("Caught");
-		console.log(err);
-		throw err //want to ensure the app terminates so that docker will start the container back up, otherwise the running app could just be dead
-	});
+	startListeningForCommands()
 } else if (args.length == 1 && args[0] == 'test') {
 	checkDevices()
 } else {

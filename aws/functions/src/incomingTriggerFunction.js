@@ -1,18 +1,31 @@
 import aws from 'aws-sdk'
 
-const sqs = new aws.SQS({apiVersion: '2012-11-05'})
+import {INCOMING_TOPIC_NAME} from '../../../edge/app/constants.js'
 
-const queueUrl = process.env.QUEUE_URL
+const iot = new aws.Iot({
+	apiVersion: '2015-05-28'
+})
+const dataEndpointPromise = buildIotDataApi()
+
+async function buildIotDataApi() {
+	const endpointResponse = await iot.describeEndpoint({
+		endpointType: 'iot:Data-ATS'
+	}).promise()
+	const iotdata = new aws.IotData({
+		endpoint: endpointResponse.endpointAddress,
+		apiVersion: '2015-05-28'
+	})
+	return iotdata
+}
 
 export async function handler(event, context) {
-    let params = {
-		MessageBody: "test message here",
-		MessageGroupId: 'a',
-		MessageDeduplicationId: '' + Date.now(),
-		QueueUrl: queueUrl
-	}
+	let iotdata = await dataEndpointPromise //workaround until we can use top level await
 	console.log('sending message...')
-    await sqs.sendMessage(params).promise()
+	await iotdata.publish({
+		topic: INCOMING_TOPIC_NAME,
+		payload: null,
+		qos: '1',
+	}).promise()
 	console.log('sent message.')
 	return {
         statusCode: '200'

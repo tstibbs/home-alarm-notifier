@@ -6,15 +6,21 @@ services:
     build: .
     restart: unless-stopped
     secrets:
-      - aws_credentials
+      - privateKeyPath
+      - clientCertPath
+      - caCertPath
     environment:
-      - AWS_CREDENTIALS_FILE=/run/secrets/aws_credentials
-      - aws_region=eu-west-2
-      - aws_account=${aws_account}
-      - aws_queue_name=home-alarm-notifier-CloudToEdgeQueue.fifo
+      - IOT_PRIVATE_KEY_PATH=/run/secrets/privateKeyPath
+      - IOT_CLIENT_CERT_PATH=/run/secrets/clientCertPath
+      - IOT_CA_CERT_PATH=/run/secrets/caCertPath
+      - IOT_CLIENT_ID=${IOT_CLIENT_ID}
+      - IOT_HOST=${IOT_HOST}
       - DEVICES=${DEVICES}
-      - notification_function_name=home-alarm-notifier-notification-function
 
 secrets:
-  aws_credentials:
-    file: aws_credentials.json
+  privateKeyPath:
+    file: creds/private.pem.key
+  clientCertPath:
+    file: creds/certificate.pem.crt
+  caCertPath:
+    file: creds/AmazonRootCA1.pem
