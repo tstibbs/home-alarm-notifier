@@ -7,6 +7,9 @@ import {HttpLambdaIntegration} from '@aws-cdk/aws-apigatewayv2-integrations-alph
 import {CfnPolicy} from 'aws-cdk-lib/aws-iot'
 import {TopicRule, IotSql} from '@aws-cdk/aws-iot-alpha'
 import {LambdaFunctionAction} from '@aws-cdk/aws-iot-actions-alpha'
+
+import {applyStandardTags} from '@tstibbs/cloud-core-utils'
+
 import {IFTTT_KEY} from './deploy-envs.js'
 import {INCOMING_TOPIC_NAME, RESPONSE_TOPIC_NAME, RULE_NAME} from '../../../edge/app/constants.js'
 
@@ -21,6 +24,7 @@ class DeployStack extends Stack {
 		this.createIncomingElements()
 		this.createNotificationElements()
 		this.createEdgeElements()
+		applyStandardTags(this)
 	}
 
 	createIncomingElements() {
