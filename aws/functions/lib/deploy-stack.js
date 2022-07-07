@@ -9,6 +9,7 @@ import {TopicRule, IotSql} from '@aws-cdk/aws-iot-alpha'
 import {LambdaFunctionAction} from '@aws-cdk/aws-iot-actions-alpha'
 
 import {applyStandardTags} from '@tstibbs/cloud-core-utils'
+import {addUsageTrackingToHttpApi} from '@tstibbs/cloud-core-utils/src/stacks/usage-tracking.js'
 
 import {IFTTT_KEY} from './deploy-envs.js'
 import {INCOMING_TOPIC_NAME, RESPONSE_TOPIC_NAME, RULE_NAME} from '../../../edge/app/constants.js'
@@ -46,6 +47,8 @@ class DeployStack extends Stack {
 		const incomingInterfaceApi = new HttpApi(this, 'incomingInterfaceApi', {
 			apiName: `${Aws.STACK_NAME}-incomingInterfaceApi`
 		})
+		addUsageTrackingToHttpApi(incomingInterfaceApi)
+
 		const incomingTriggerIntegration = new HttpLambdaIntegration('incomingTriggerIntegration', incomingTriggerFunction)
 		incomingInterfaceApi.addRoutes({
 			path: `/${triggerPath}`,
