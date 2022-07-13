@@ -14,7 +14,7 @@ const client = buildIotClient(topics, (topic, payload) => {
 
 function startListeningForCommands() {
 	//just to keep it running and listening:
-	setInterval(() => {}, 15.5*24*60*60*1000)//can't be over max int, and using a number of days that doesn't divide by 7 means that it will be at a different time/day
+	setInterval(() => {}, 15.5 * 24 * 60 * 60 * 1000) //can't be over max int, and using a number of days that doesn't divide by 7 means that it will be at a different time/day
 }
 
 async function wait(time) {
@@ -34,16 +34,19 @@ async function processEvent() {
 }
 
 async function checkDevices() {
-	let pings = await Promise.all(devicePings.map(isAccessible));
-	console.log(devicePings);
-	console.log(pings);
-	let success = pings.includes(true);
+	let pings = await Promise.all(devicePings.map(isAccessible))
+	console.log(devicePings)
+	console.log(pings)
+	let success = pings.includes(true)
 	console.log(`Ping success=${success} - ${new Date()}`)
 	if (!success) {
-		client.publish(RESPONSE_TOPIC_NAME, JSON.stringify({
-			"event": "disarmed",
-			"situation": "home owner " + (success ? "was" : "not") + " present"
-		}))
+		client.publish(
+			RESPONSE_TOPIC_NAME,
+			JSON.stringify({
+				event: 'disarmed',
+				situation: 'home owner ' + (success ? 'was' : 'not') + ' present'
+			})
+		)
 	}
 }
 

@@ -35,15 +35,19 @@ class DeployStack extends Stack {
 			timeout: Duration.seconds(20),
 			runtime: Runtime.NODEJS_16_X
 		})
-		incomingTriggerFunction.addToRolePolicy(new PolicyStatement({
-			actions: ['iot:Publish'],
-			resources: [incomingTopicArn]
-		}))
-		incomingTriggerFunction.addToRolePolicy(new PolicyStatement({
-			actions: ['iot:DescribeEndpoint'],
-			resources: ['*']
-		}))
-		
+		incomingTriggerFunction.addToRolePolicy(
+			new PolicyStatement({
+				actions: ['iot:Publish'],
+				resources: [incomingTopicArn]
+			})
+		)
+		incomingTriggerFunction.addToRolePolicy(
+			new PolicyStatement({
+				actions: ['iot:DescribeEndpoint'],
+				resources: ['*']
+			})
+		)
+
 		const incomingInterfaceApi = new HttpApi(this, 'incomingInterfaceApi', {
 			apiName: `${Aws.STACK_NAME}-incomingInterfaceApi`
 		})
@@ -52,11 +56,11 @@ class DeployStack extends Stack {
 		const incomingTriggerIntegration = new HttpLambdaIntegration('incomingTriggerIntegration', incomingTriggerFunction)
 		incomingInterfaceApi.addRoutes({
 			path: `/${triggerPath}`,
-			methods: [ HttpMethod.GET ],
+			methods: [HttpMethod.GET],
 			integration: incomingTriggerIntegration
 		})
 
-		new CfnOutput(this, 'triggerUrl', { value: `${incomingInterfaceApi.url}${triggerPath}` })
+		new CfnOutput(this, 'triggerUrl', {value: `${incomingInterfaceApi.url}${triggerPath}`})
 	}
 
 	createNotificationElements() {
@@ -72,7 +76,7 @@ class DeployStack extends Stack {
 
 		new TopicRule(this, 'topicRule', {
 			topicRuleName: RULE_NAME,
-			sql: IotSql.fromStringAsVer20160323("SELECT *"),
+			sql: IotSql.fromStringAsVer20160323('SELECT *'),
 			actions: [new LambdaFunctionAction(notificationFunction)]
 		})
 	}
