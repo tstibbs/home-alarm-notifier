@@ -1,12 +1,13 @@
-import {startListeningForCommands, checkDevices} from './app.js'
+import {App} from './app.js'
 
 console.log(`Running... ${new Date()}`)
+const app = new App()
 
 var args = process.argv.slice(2)
 if (args.length == 0) {
-	startListeningForCommands()
+	app.startListeningForCommands()
 } else if (args.length == 1 && args[0] == 'test') {
-	checkDevices()
+	app.checkDevices()
 } else {
 	throw new Error(`Unsupported args (did you mean 'test'?): ${JSON.stringify(args)}`)
 }

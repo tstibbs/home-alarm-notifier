@@ -5,6 +5,6 @@
 		"@tstibbs/cloud-core-edge-utils": "file:../../../cloud-core/edge/iot"
 	},
 	"scripts": {
-		"test": "DEVICES=abc AWS_CREDENTIALS_FILE=test/dummy-credentials-file.json node test/test.js"
+		"test": "DEVICES=abc node test/test.js"
 	}
 }
