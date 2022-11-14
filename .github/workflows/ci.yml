@@ -52,5 +52,8 @@ jobs:
       working-directory: home-alarm-notifier/edge/app
     - run: npm run test
       working-directory: home-alarm-notifier/edge/app
+    - name: Set up environment for docker build
+      run: mkdir -p deps/cloud-core/edge && cp -r ../../cloud-core/edge/iot deps/cloud-core/edge/iot
+      working-directory: home-alarm-notifier/edge
     - run: docker-compose build
       working-directory: home-alarm-notifier/edge

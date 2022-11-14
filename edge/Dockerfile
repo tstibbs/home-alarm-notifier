@@ -9,13 +9,12 @@ RUN apt-get update && \
 	rm -r /var/lib/apt/lists/* && \
 	apt-get clean
 
-# copy in dependencies that aren't in npm, and set up the paths so it is where package json expects it to be
-WORKDIR /usr/src/deps
-COPY deps/cloud-core ./cloud-core
-RUN mkdir -p /cloud-core/edge && \
-    ln -s /usr/src/deps/cloud-core /cloud-core/edge/iot
+# copy in dependencies that aren't in npm
+# in dev run `mkdir -p deps/cloud-core/edge && cp -r ../../../cloud-core/edge/iot deps/cloud-core/edge/iot` to get this in the right place
+RUN mkdir -p /cloud-core/edge
+COPY deps/cloud-core/edge/iot /cloud-core/edge
 
-WORKDIR /usr/src/deps/cloud-core
+WORKDIR /cloud-core/edge/iot
 RUN npm ci --only=production
 
 WORKDIR /usr/src/app
