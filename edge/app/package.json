@@ -1,5 +1,10 @@
 {
+	"name": "@tstibbs/home-alarm-notifier-edge",
 	"private": true,
+	"engines": {
+		"node": ">=16",
+		"npm": ">=8"
+	},
 	"type": "module",
 	"dependencies": {
 		"@tstibbs/cloud-core-edge-utils": "file:../../../cloud-core/edge/iot"
