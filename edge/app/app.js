@@ -11,10 +11,15 @@ const topics = [INCOMING_TOPIC_NAME]
 class App {
 	#client
 
-	startListeningForCommands() {
+	#init() {
+		//just so that the client doesn't get created when simply instantiating the class in tests
 		this.#client = buildIotClient(topics, () => {
 			this.#processEvent()
 		})
+	}
+
+	startListeningForCommands() {
+		this.#init()
 		//just to keep it running and listening:
 		setInterval(() => {}, 15.5 * 24 * 60 * 60 * 1000) //can't be over max int, and using a number of days that doesn't divide by 7 means that it will be at a different time/day
 	}
@@ -32,10 +37,15 @@ class App {
 		//no point pinging straight away, as if the devices aren't there we will wait a bit to see if they connect anyway
 		//so might as well just wait until the max time before trying to all
 		await this.#wait(5000)
-		await this.checkDevices()
+		await this.#checkDevices()
 	}
 
-	async checkDevices() {
+	async testCheckDevices() {
+		this.#init()
+		await this.#checkDevices()
+	}
+
+	async #checkDevices() {
 		let pings = await Promise.all(devicePings.map(this.#isAccessible))
 		console.log(devicePings)
 		console.log(pings)
