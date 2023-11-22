@@ -1,9 +1,9 @@
-FROM node:18-buster-slim
+FROM node:20-bookworm-slim
 
 ENV NPM_CONFIG_ENGINE_STRICT=true
 
 RUN apt-get update && \
-    apt-get -y install netcat && \
+    apt-get -y install netcat-traditional && \
     apt-get -y install iputils-ping && \
 	rm -r /var/lib/apt/lists/* && \
 	apt-get clean
