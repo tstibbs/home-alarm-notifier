@@ -27,9 +27,9 @@ CMD [ "node", "." ]
 # example commands to deploy onto the device that will be running this
 # (for dev it's probably simpler than pushing out a container image)
 #
-# ssh device mkdir -p ~/workspace/home-alarm-notifier/app ~/workspace/home-alarm-notifier/deps/cloud-core/edge/iot/ ~/workspace/home-alarm-notifier/creds
+# ssh $device mkdir -p ~/workspace/home-alarm-notifier/app ~/workspace/home-alarm-notifier/deps/cloud-core/edge/iot/ ~/workspace/home-alarm-notifier/creds
 # cd edge
-# scp -r app/*.js* device:~/workspace/home-alarm-notifier/app
-# scp -r deps/cloud-core/edge/iot/*.js* device:~/workspace/home-alarm-notifier/deps/cloud-core/edge/iot/
-# scp -r Dockerfile docker-compose.yml device:~/workspace/home-alarm-notifier/
-# scp -r creds/* device:~/workspace/home-alarm-notifier/creds/
+# scp -r app/*.js* $device:~/workspace/home-alarm-notifier/app
+# scp -r deps/cloud-core/edge/iot/*.js* $device:~/workspace/home-alarm-notifier/deps/cloud-core/edge/iot/
+# scp -r Dockerfile docker-compose.yml $device:~/workspace/home-alarm-notifier/
+# scp -r creds/* $device:~/workspace/home-alarm-notifier/creds/

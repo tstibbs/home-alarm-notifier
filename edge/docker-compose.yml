@@ -16,6 +16,7 @@ services:
       - IOT_CLIENT_ID=${IOT_CLIENT_ID}
       - IOT_HOST=${IOT_HOST}
       - DEVICES=${DEVICES}
+      - HA_WEBHOOK=${HA_WEBHOOK}
 
 secrets:
   privateKeyPath:

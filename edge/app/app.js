@@ -1,5 +1,6 @@
 import util from 'util'
 import {exec as nodeExec} from 'child_process'
+import axios from 'axios'
 
 import {INCOMING_TOPIC_NAME, RESPONSE_TOPIC_NAME} from './constants.js'
 import {buildIotClient} from '@tstibbs/cloud-core-edge-utils'
@@ -7,6 +8,7 @@ import {buildIotClient} from '@tstibbs/cloud-core-edge-utils'
 const exec = util.promisify(nodeExec)
 const devicePings = process.env.DEVICES.split(',')
 const topics = [INCOMING_TOPIC_NAME]
+const haWebhook = process.env.HA_WEBHOOK
 
 class App {
 	#client
@@ -52,13 +54,25 @@ class App {
 		let success = pings.includes(true)
 		console.log(`Ping success=${success} - ${new Date()}`)
 		if (!success) {
-			this.#client.publish(
-				RESPONSE_TOPIC_NAME,
-				JSON.stringify({
-					event: 'disarmed',
-					situation: 'home owner ' + (success ? 'was' : 'not') + ' present'
-				})
+			axios.post(
+				haWebhook,
+				{
+					title: 'Alarm Disarmed',
+					message: 'home owner ' + (success ? 'was' : 'not') + ' present'
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}
 			)
+			// this.#client.publish(
+			// 	RESPONSE_TOPIC_NAME,
+			// 	JSON.stringify({
+			// 		event: 'disarmed',
+			// 		situation: 'home owner ' + (success ? 'was' : 'not') + ' present'
+			// 	})
+			// )
 		}
 	}
 
