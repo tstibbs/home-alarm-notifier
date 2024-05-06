@@ -13,18 +13,18 @@ jobs:
     steps:
 
     # checkout a dependent project
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         repository: tstibbs/cloud-core
         path: 'cloud-core' # will resolve to /home/runner/work/home-alarm-notifier/home-alarm-notifier/cloud-core
 
     # checkout 'this' project
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         path: 'home-alarm-notifier' # will resolve to /home/runner/work/home-alarm-notifier/home-alarm-notifier/home-alarm-notifier
 
 
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v4
       with:
         node-version: 20.x
 
