@@ -8,11 +8,10 @@ const iot = new aws.Iot({
 const dataEndpointPromise = buildIotDataApi()
 
 async function buildIotDataApi() {
-	const endpointResponse = await iot
-		.describeEndpoint({
-			endpointType: 'iot:Data-ATS'
-		})
-		.promise()
+	const endpointResponse = await iot.describeEndpoint({
+		endpointType: 'iot:Data-ATS'
+	})
+
 	const iotdata = new aws.IotData({
 		endpoint: endpointResponse.endpointAddress,
 		apiVersion: '2015-05-28'
@@ -23,13 +22,12 @@ async function buildIotDataApi() {
 export async function handler(event, context) {
 	let iotdata = await dataEndpointPromise //workaround until we can use top level await
 	console.log('sending message...')
-	await iotdata
-		.publish({
-			topic: INCOMING_TOPIC_NAME,
-			payload: null,
-			qos: '1'
-		})
-		.promise()
+	await iotdata.publish({
+		topic: INCOMING_TOPIC_NAME,
+		payload: null,
+		qos: '1'
+	})
+
 	console.log('sent message.')
 	return {
 		statusCode: '200'
