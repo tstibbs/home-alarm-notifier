@@ -8,6 +8,7 @@
 	"type": "module",
 	"dependencies": {
 		"@aws-sdk/client-iot": "^3.726.1",
+		"@aws-sdk/client-iot-data-plane": "^3.726.1",
 		"dotenv": "^16.4.5"
 	},
 	"devDependencies": {
