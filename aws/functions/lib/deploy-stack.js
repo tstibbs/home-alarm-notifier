@@ -33,7 +33,7 @@ class DeployStack extends Stack {
 			entry: 'src/incomingTriggerFunction.js',
 			memorySize: 128,
 			timeout: Duration.seconds(20),
-			runtime: Runtime.NODEJS_20_X
+			runtime: Runtime.NODEJS_22_X
 		})
 		incomingTriggerFunction.addToRolePolicy(
 			new PolicyStatement({
@@ -71,7 +71,7 @@ class DeployStack extends Stack {
 			},
 			memorySize: 128,
 			timeout: Duration.seconds(20),
-			runtime: Runtime.NODEJS_18_X
+			runtime: Runtime.NODEJS_22_X
 		})
 
 		new TopicRule(this, 'topicRule', {

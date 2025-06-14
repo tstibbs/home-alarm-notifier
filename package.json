@@ -2,8 +2,8 @@
 	"name": "@tstibbs/home-alarm-notifier-root",
 	"private": true,
 	"engines": {
-		"node": ">=16",
-		"npm": ">=8"
+		"node": ">=22",
+		"npm": ">=10"
 	},
 	"devDependencies": {
 		"lint-staged": "^15.2.2",
